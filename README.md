@@ -36,7 +36,7 @@ backend/    Node.js + Express 5 + Claude API     → deploys to Railway
 | Rate limiting | 20 requests per IP per 15 minutes on `/api/summarize` (configurable). |
 | CORS | Only origins in `ALLOWED_ORIGINS` can call the API from a browser. |
 | Error handling | Invalid JSON → 400, bad input → 400, too large → 413, rate limited → 429, Claude API errors → 502/503 with safe messages (details are logged on the server only). |
-| Health check | `GET /health` → `{"status":"ok"}` (used by Railway). |
+| Health check | `GET /` and `GET /health` → `{"status":"ok"}` (Railway uses `/health`). |
 
 ## Run locally
 

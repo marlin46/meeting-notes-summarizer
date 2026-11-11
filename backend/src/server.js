@@ -35,6 +35,8 @@ app.use(
 
 app.use(express.json({ limit: '200kb' }));
 
+// Health checks
+app.get('/', (_req, res) => res.json({ status: 'ok' }));
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 app.use(
