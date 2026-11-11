@@ -5,8 +5,8 @@ import rateLimit from 'express-rate-limit';
 import { summarizeRouter } from './routes/summarize.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error('Missing OPENAI_API_KEY. Copy .env.example to .env and set it.');
+if (!process.env.CLAUDE_API_KEY) {
+  console.error('Missing CLAUDE_API_KEY. Copy .env.example to .env and set it.');
   process.exit(1);
 }
 

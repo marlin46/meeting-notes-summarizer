@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validateTranscript } from '../middleware/validate.js';
-import { summarizeTranscript } from '../services/openai.js';
+import { summarizeTranscript } from '../services/claude.js';
 
 export const summarizeRouter = Router();
 

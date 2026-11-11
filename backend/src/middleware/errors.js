@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 
 export class HttpError extends Error {
   constructor(status, message) {
@@ -26,14 +26,24 @@ export function errorHandler(err, _req, res, _next) {
     return res.status(err.status).json({ error: err.message });
   }
 
-  // OpenAI API errors: log details server-side, return a safe message.
-  if (err instanceof OpenAI.APIError) {
-    console.error(`OpenAI API error ${err.status ?? ''}:`, err.message);
-    if (err.status === 429) {
-      return res.status(503).json({ error: 'The AI service is busy or out of quota. Try again shortly.' });
-    }
-    if (err.status === 401 || err.status === 403) {
-      return res.status(502).json({ error: 'The AI service rejected the server credentials.' });
+  // Claude API errors: log details server-side, return a safe message.
+  // Checked most specific first.
+  if (err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError) {
+    console.error(`Claude API auth error ${err.status}:`, err.message);
+    return res.status(502).json({ error: 'The AI service rejected the server credentials.' });
+  }
+  if (err instanceof Anthropic.RateLimitError) {
+    console.error('Claude API rate limited:', err.message);
+    return res.status(503).json({ error: 'The AI service is busy or out of quota. Try again shortly.' });
+  }
+  if (err instanceof Anthropic.APIConnectionError) {
+    console.error('Claude API connection error:', err.message);
+    return res.status(503).json({ error: 'Could not reach the AI service. Try again shortly.' });
+  }
+  if (err instanceof Anthropic.APIError) {
+    console.error(`Claude API error ${err.status ?? ''}:`, err.message);
+    if (err.status === 529) {
+      return res.status(503).json({ error: 'The AI service is overloaded. Try again shortly.' });
     }
     return res.status(502).json({ error: 'The AI service returned an error. Please try again.' });
   }
